@@ -1,0 +1,486 @@
+<p-toast></p-toast>
+
+<div class="card">
+  <p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+      <button
+        pButton
+        pRipple
+        label="Thêm sản phẩm"
+        icon="pi pi-plus"
+        class="p-button-success mr-2"
+        (click)="openNew()"
+      ></button>
+    </ng-template>
+  </p-toolbar>
+
+  <p-table
+    #dt
+    [value]="listProduct"
+    [rows]="6"
+    [paginator]="true"
+    [globalFilterFields]="['name', 'category.name']"
+    [tableStyle]="{ 'min-width': '75rem' }"
+    [rowHover]="true"
+    dataKey="id"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [showCurrentPageReport]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex align-items-center justify-content-between">
+        <h5 class="m-0">Quản lý vật liệu</h5>
+        <span class="p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            pInputText
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+            placeholder="Tìm kiếm"
+          />`
+        </span>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th>
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="name" style="min-width: 15rem">
+          Tên vật liệu <p-sortIcon field="name"></p-sortIcon>
+        </th>
+        <th>Ảnh</th>
+        <th pSortableColumn="price">
+          Gía <p-sortIcon field="price"></p-sortIcon>
+        </th>
+        <th pSortableColumn="quantity" style="min-width: 10rem">
+          Số lượng <p-sortIcon field="quantity"></p-sortIcon>
+        </th>
+        <th pSortableColumn="category.name" style="min-width: 10rem">
+          Loại vật liệu <p-sortIcon field="category.name"></p-sortIcon>
+        </th>
+        <th>Trạng thái</th>
+        <th style="min-width: 10rem"></th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="product"></p-tableCheckbox>
+        </td>
+        <td>{{ product.name }}</td>
+
+        <!-- Add a conditional check for product images -->
+        <td>
+          <img
+            [src]="
+              product.images && product.images.length > 0
+                ? 'data:image/jpg;base64,' + product.images[0].data
+                : '../../../../assets/image/no-image.png'
+            "
+            [alt]="product.name"
+            width="100"
+            class="shadow-4"
+          />
+        </td>
+        <!-- <td *ngIf="product.images && product.images.length > 0">
+          <img
+            src="{{ 'data:image/jpg;base64,' + product.images[0].data }}"
+            [alt]="product.name"
+            width="100"
+            class="shadow-4"
+          />
+        </td>
+        <td *ngIf="!product.images || product.images.length === 0">
+          <img
+            src="../../../../assets/image/no-image.png"
+            alt="no-img"
+            width="100"
+            height="120"
+            class="shadow-4"
+          />
+        </td> -->
+
+        <td>{{ product.price | currency : "VND" }}</td>
+        <td>{{ product.quantity }}</td>
+        <td>{{ product.category.name }}</td>
+        <td>
+          <button
+            pButton
+            type="button"
+            class="p-button-info"
+            (click)="enableProdcut(product.id)"
+            *ngIf="product.enable"
+          >
+            Enabled
+          </button>
+          <button
+            pButton
+            type="button"
+            class="p-button-warning"
+            (click)="enableProdcut(product.id)"
+            *ngIf="!product.enable"
+          >
+            Disabled
+          </button>
+        </td>
+        <td>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-success mr-2"
+            (click)="openUpdate(product)"
+          ></button>
+          <button
+            pButton
+            pRipple
+            icon="pi pi-trash"
+            *ngIf="userRole === 'ROLE_ADMIN'"
+            class="p-button-rounded p-button-warning"
+            (click)="onDelete(product.id, product.name)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="summary">
+      <div class="flex align-items-center justify-content-between">
+        <!-- In total there are {{products ? products.length : 0 }} products. -->
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog
+  [(visible)]="showForm"
+  [style]="{ width: '30vw' }"
+  header="Thông tin chi tiết sản phẩm"
+  [modal]="true"
+  styleClass="p-fluid"
+>
+  <ng-template pTemplate="content">
+    <form action="" [formGroup]="productForm">
+      <div class="field">
+        <label for="name">Tên sản phẩm</label>
+        <input
+          class="form-control"
+          type="text"
+          pInputText
+          id="name"
+          formControlName="name"
+          required
+          autofocus
+          [ngClass]="{
+            'is-invalid': submitted && productForm.get('name')?.invalid
+          }"
+        />
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            submitted &&
+            productForm.get('name')?.invalid &&
+            productForm.get('name')?.touched
+          "
+        >
+          <div *ngIf="productForm.get('name')?.errors?.['required']">
+            Yêu lòng nhập tên vật liệu
+          </div>
+          <div *ngIf="productForm.get('name')?.errors?.['minlength']">
+            Độ dài tối thiểu phải là 5
+          </div>
+          <div *ngIf="productForm.get('name')?.errors?.['maxlength']">
+            Độ dài tối đa phải là 50
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="description">Mô tả</label>
+        <textarea
+          class="form-control"
+          id="description"
+          pInputTextarea
+          formControlName="description"
+          required
+          rows="3"
+          cols="20"
+          [ngClass]="{
+            'is-invalid': submitted && productForm.get('description')?.invalid
+          }"
+        ></textarea>
+        <div
+          class="invalid-feedback"
+          *ngIf="
+            submitted &&
+            productForm.get('description')?.invalid &&
+            productForm.get('description')?.touched
+          "
+        >
+          <div *ngIf="productForm.get('description')?.errors?.['required']">
+            Yêu lòng nhập mô tả của vật liệu
+          </div>
+          <div *ngIf="productForm.get('description')?.errors?.['minlength']">
+            Độ dài tối thiểu phải là 5
+          </div>
+          <div *ngIf="productForm.get('description')?.errors?.['maxlength']">
+            Độ dài tối đa phải là 1000
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label class="mb-3">Loại vật liệu</label>
+        <div class="formgrid grid">
+          <div
+            class="field-radiobutton col-6"
+            *ngFor="let category of listCategory"
+          >
+            <p-radioButton
+              formControlName="categoryId"
+              [value]="category.id"
+              [inputId]="category.id"
+              class="mr-2"
+            ></p-radioButton>
+            <label [for]="category.id">{{ category.name }}</label>
+          </div>
+        </div>
+      </div>
+      <div class="formgrid grid">
+        <div class="field col">
+          <label for="price">Gía bán</label>
+          <input
+            type="number"
+            class="form-control"
+            id="price"
+            formControlName="price"
+            mode="currency"
+            [ngClass]="{
+              'is-invalid': submitted && productForm.get('price')?.invalid
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              submitted &&
+              productForm.get('price')?.invalid &&
+              productForm.get('price')?.touched
+            "
+          >
+            <div *ngIf="productForm.get('price')?.errors?.['required']">
+              Yêu lòng nhập giá bán của vật liệu
+            </div>
+            <div *ngIf="productForm.get('price')?.errors?.['min']">
+              Gía bán không dược nhỏ hơn 0
+            </div>
+          </div>
+        </div>
+        <div class="field col">
+          <label for="quantity">Số lượng</label>
+          <input
+            type="number"
+            class="form-control"
+            id="quantity"
+            formControlName="quantity"
+            [ngClass]="{
+              'is-invalid': submitted && productForm.get('quantity')?.invalid
+            }"
+          />
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              submitted &&
+              productForm.get('quantity')?.invalid &&
+              productForm.get('quantity')?.touched
+            "
+          >
+            <div *ngIf="productForm.get('quantity')?.errors?.['required']">
+              Yêu lòng nhập số lượng vật liệu
+            </div>
+            <div *ngIf="productForm.get('quantity')?.errors?.['min']">
+              Số lượng không dược nhỏ hơn 0
+            </div>
+          </div>
+        </div>
+        <div class="field col">
+          <label for="unit">Đơn vị</label>
+          <select
+            class="form-control"
+            id="unit"
+            pInputText
+            required
+            autofocus
+            formControlName="unit"
+            [ngClass]="{
+              'is-invalid': submitted && productForm.get('unit')?.invalid
+            }"
+          >
+            >
+            <!-- <option value="M3">M3</option>
+            <option value="Cái">Cái</option>
+            <option value="Miếng">Miếng</option>
+            <option value="Kg">Kg</option>
+            <option value="Thùng">Thùng</option>
+            <option value="Hộp">Hộp</option>
+            <option value="Viên">Viên</option> -->
+            <option value="Bịch">Bịch</option>
+            <option value="Thùng">Thùng</option>
+            <option value="Khối">Khối</option>
+            <option value="Viên">Viên</option>
+            <option value="Cuộn">Cuộn</option>
+            <option value="Cái">Cái</option>
+          </select>
+          <div
+            class="invalid-feedback"
+            *ngIf="
+              submitted &&
+              productForm.get('unit')?.invalid &&
+              productForm.get('unit')?.touched
+            "
+          >
+            <div *ngIf="productForm.get('unit')?.errors?.['required']">
+              Yêu lòng nhập đơn vị của vật liệu
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <button
+          pButton
+          type="button"
+          class="p-button-success w-auto"
+          (click)="onChooseImage()"
+        >
+          Chọn ảnh
+        </button>
+        <p-dialog
+          header="Chọn ảnh"
+          [(visible)]="showImage"
+          position="top"
+          [modal]="true"
+          [style]="{ width: '40vw' }"
+          [transitionOptions]="'.3s'"
+        >
+          <div class="flex justify-content-between">
+            <div>
+              <input type="file" #file (change)="uploadFile($event)" hidden />
+              <button
+                pButton
+                (click)="file.click()"
+                label="Tải ảnh lên"
+                icon="pi pi-plus"
+                class="p-button-warning w-auto"
+              ></button>
+            </div>
+            <div>
+              <button
+                pButton
+                (click)="chooseImage()"
+                class="p-button-primary w-auto"
+                label="Chọn ảnh"
+                [disabled]="disabled"
+              ></button>
+              <button
+                pButton
+                (click)="deleteImage()"
+                class="p-button-danger ml-2 w-auto"
+                icon="pi pi-trash "
+                label="Xóa ảnh"
+                [disabled]="disabled"
+              ></button>
+            </div>
+          </div>
+          <p-divider align="left"> Ảnh đã tải lên </p-divider>
+          <div class="grid">
+            <div
+              class="col-4 list-image flex align-items-center"
+              *ngFor="let image of listImage"
+            >
+              <img
+                src="{{ 'data:image/jpg;base64,' + image.data }}"
+                alt=""
+                class="w-full h-full p-2 border-1"
+                (click)="selectImage($event, image)"
+              />
+            </div>
+          </div>
+        </p-dialog>
+        <div class="grid mt-1" *ngIf="listImageChoosen != null">
+          <div
+            class="product-image col-2 flex align-items-center"
+            *ngFor="let image of listImageChoosen"
+          >
+            <img
+              src="{{ 'data:image/jpg;base64,' + image.data }}"
+              alt=""
+              class="w-full h-full"
+              (dblclick)="deleteImageOnDoubleClick(image)"
+            />
+            <button
+              pButton
+              pRipple
+              type="button"
+              icon="pi pi-times"
+              class="p-button-rounded p-button-danger p-button-text delete-image"
+            ></button>
+          </div>
+        </div>
+      </div>
+      <div class="flex">
+        <button
+          type="submit"
+          pButton
+          *ngIf="!onUpdate"
+          (click)="createProduct()"
+        >
+          Tạo mới
+        </button>
+        <button
+          type="submit"
+          pButton
+          *ngIf="onUpdate"
+          (click)="updateProduct()"
+        >
+          Cập nhật
+        </button>
+        <button
+          pButton
+          type="button"
+          class="p-button-danger ml-3"
+          (click)="showForm = false"
+        >
+          Hủy
+        </button>
+      </div>
+    </form>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Xác nhận"
+  [(visible)]="showDelete"
+  [style]="{ width: '30vw' }"
+  [modal]="true"
+  [transitionOptions]="'.3s'"
+>
+  <div>
+    <i class="pi pi pi-exclamation-triangle"></i>
+    <span class="ml-2"
+      >Bạn có chắc xóa vật liệu
+      <span>{{ productForm.get("name")?.value }}</span> ?</span
+    >
+  </div>
+  <div class="flex justify-content-end mt-3">
+    <p-button
+      label="Yes"
+      icon="pi pi-check"
+      class="mr-2"
+      (click)="deleteProduct()"
+    ></p-button>
+    <p-button
+      label="No"
+      icon="pi pi-times"
+      (click)="showDelete = false"
+    ></p-button>
+  </div>
+</p-dialog>
+
+<p-confirmDialog [style]="{ width: '450px' }"></p-confirmDialog>

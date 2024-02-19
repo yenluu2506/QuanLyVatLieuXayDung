@@ -1,0 +1,298 @@
+<section
+  class="breadcrumb-section set-bg"
+  [ngStyle]="{ backgroundImage: 'url(assets/image/breadcrumb.jpg' }"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2>Thông tin cá nhân</h2>
+          <div class="breadcrumb__option">
+            <a routerLink="/">Home</a>
+            <span>Thông tin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="user mt-5 mb-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3 border-right" *ngIf="user != null">
+        <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+          <img class="rounded-circle mt-5" src="assets/image/author.jpg" /><span
+            class="font-weight-bold"
+            >{{ user.username }}</span
+          ><span class="text-black-50">{{ user.email }}</span
+          ><span> </span>
+        </div>
+      </div>
+      <div class="col-md-5 border-right">
+        <div class="p-3 py-5">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="text-right">Thiết lập hồ sơ</h4>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label class="labels">First Name</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="First Name"
+                [(ngModel)]="updateForm.firstname"
+                name="firstname"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="labels">Last Name</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Last Name"
+                [(ngModel)]="updateForm.lastname"
+                name="lastname"
+              />
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-12">
+              <label class="labels">Phone</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Phone Number"
+                [(ngModel)]="updateForm.phone"
+                name="phone"
+              />
+            </div>
+            <div class="col-md-12">
+              <label class="labels">Địa chỉ</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Address"
+                [(ngModel)]="updateForm.address"
+                name="address"
+              />
+            </div>
+            <div class="col-md-12">
+              <label class="labels">Email</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Email"
+                [(ngModel)]="updateForm.email"
+                name="email"
+              />
+            </div>
+            <div class="col-md-12">
+              <label class="labels">Quốc gia</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="country"
+                [(ngModel)]="updateForm.country"
+                name="country"
+              />
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6">
+              <label class="labels">Thành phố/Thị trấn</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="town"
+                [(ngModel)]="updateForm.town"
+                name="town"
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="labels">Quận/Huyện</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="state"
+                [(ngModel)]="updateForm.state"
+                name="state"
+              />
+            </div>
+          </div>
+          <div class="mt-5 text-center">
+            <button
+              class="btn btn-primary profile-button"
+              type="button"
+              (click)="updateProfile()"
+            >
+              Lưu
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-3 py-5">
+          <div class="col-md-12">
+            <button
+              pButton
+              pRipple
+              type="button"
+              label="Đổi mật khẩu"
+              class="p-button-primary"
+              (click)="showChangePassword()"
+            ></button>
+            <p-dialog
+              header="Danh mục"
+              [(visible)]="changePassword"
+              [style]="{ width: '30vw' }"
+              [modal]="true"
+              [transitionOptions]="'.3s'"
+            >
+              <form
+                action=""
+                [formGroup]="changePasswordForm"
+                (ngSubmit)="changePasswordFunc()"
+              >
+                <div class="p-field">
+                  <label for="oldPassword">Mật khẩu cũ: </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    pInputText
+                    class="w-full mt-2"
+                    formControlName="oldPassword"
+                    name="oldPassword"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        changePasswordForm.get('oldPassword')?.invalid
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="
+                      submitted &&
+                      changePasswordForm.get('oldPassword')?.invalid &&
+                      changePasswordForm.get('oldPassword')?.touched
+                    "
+                  >
+                    <div
+                      *ngIf="changePasswordForm.get('oldPassword')?.errors?.['required']"
+                    >
+                      Yêu lòng nhập mật khẩu cũ của bạn
+                    </div>
+                  </div>
+                </div>
+                <div class="p-field">
+                  <label for="newPassword">Mật khẩu mới: </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    pInputText
+                    class="w-full mt-2"
+                    name="newPassword"
+                    formControlName="newPassword"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        changePasswordForm.get('newPassword')?.invalid &&
+                        changePasswordForm.get('newPassword')?.touched
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="
+                      submitted &&
+                      changePasswordForm.get('newPassword')?.invalid
+                    "
+                  >
+                    <div
+                      *ngIf="changePasswordForm.get('newPassword')?.errors?.['required']"
+                    >
+                      Yêu lòng nhập mật khẩu mới của bạn
+                    </div>
+                    <div
+                      *ngIf="changePasswordForm.get('newPassword')?.errors?.['minlength']"
+                    >
+                      Độ dài tối thiểu phải là 5
+                    </div>
+                    <div
+                      *ngIf="changePasswordForm.get('newPassword')?.errors?.['maxlength']"
+                    >
+                      Độ dài tối đa phải là 30
+                    </div>
+                  </div>
+                </div>
+                <div class="p-field">
+                  <label for="newPasswordConfim">Nhập lại mật khẩu: </label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    pInputText
+                    class="w-full mt-2"
+                    formControlName="newPasswordConfim"
+                    name="newPasswordConfim"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted &&
+                        changePasswordForm.get('newPasswordConfim')?.invalid &&
+                        changePasswordForm.get('newPasswordConfim')?.touched
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="
+                      submitted &&
+                      changePasswordForm.get('newPasswordConfim')?.invalid
+                    "
+                  >
+                    <div
+                      *ngIf="changePasswordForm.get('newPasswordConfim')?.errors?.['required']"
+                    >
+                      Yêu lòng nhập mật khẩu mới của bạn
+                    </div>
+                    <div
+                      *ngIf="changePasswordForm.get('newPasswordConfim')?.errors?.['minlength']"
+                    >
+                      Độ dài tối thiểu phải là 5
+                    </div>
+                    <div
+                      *ngIf="
+                        changePasswordForm.get('newPasswordConfim') !==
+                        changePasswordForm.get('newPassword')
+                      "
+                    >
+                      Vui lòng nhập lại đúng mật khẩu mới
+                    </div>
+                    <div
+                      *ngIf="changePasswordForm.get('newPasswordConfim')?.errors?.['maxlength']"
+                    >
+                      Độ dài tối đa phải là 30
+                    </div>
+                  </div>
+                </div>
+                <div class="p-field mt-3">
+                  <button type="submit" pButton>Save</button>
+                  <button
+                    pButton
+                    type="button"
+                    class="p-button-danger ml-3"
+                    (click)="changePassword = false"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              </form>
+            </p-dialog>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- <div class="container rounded bg-white mt-5 mb-5">
+    <div class="row">
+
+    </div>
+</div> -->

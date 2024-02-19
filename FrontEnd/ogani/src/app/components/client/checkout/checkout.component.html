@@ -1,0 +1,314 @@
+<p-toast></p-toast>
+
+<section
+  class="breadcrumb-section set-bg"
+  [ngStyle]="{ backgroundImage: 'url(assets/image/breadcrumb.jpg)' }"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2>Thủ tục thanh toán</h2>
+          <div class="breadcrumb__option">
+            <a routerLink="/">Trang chủ</a>
+            <span>Thủ tục thanh toán</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="checkout spad">
+  <div class="container">
+    <div class="checkout__form">
+      <h4>Chi tiết thanh toán</h4>
+      <form action="#" [formGroup]="orderForm" (ngSubmit)="placeOrder()">
+        <div class="row">
+          <div class="col-lg-8 col-md-6">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Fist Name<span>*</span></p>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="firstname"
+                    name="firstname"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && orderForm.get('firstname')?.invalid
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="submitted && orderForm.get('firstname')?.invalid"
+                  >
+                    <div
+                      *ngIf="orderForm.get('firstname')?.errors?.['required']"
+                    >
+                      Yêu lòng nhập tên của bạn
+                    </div>
+                    <div
+                      *ngIf="orderForm.get('firstname')?.errors?.['minlength']"
+                    >
+                      Độ dài tối thiểu phải là 3
+                    </div>
+                    <div
+                      *ngIf="orderForm.get('firstname')?.errors?.['maxlength']"
+                    >
+                      Độ dài tối đa phải là 50
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Last Name<span>*</span></p>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="lastname"
+                    name="lastname"
+                    [ngClass]="{
+                      'is-invalid':
+                        submitted && orderForm.get('lastname')?.invalid
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="submitted && orderForm.get('lastname')?.invalid"
+                  >
+                    <div
+                      *ngIf="orderForm.get('lastname')?.errors?.['required']"
+                    >
+                      Yêu lòng nhập họ của bạn
+                    </div>
+                    <div
+                      *ngIf="orderForm.get('lastname')?.errors?.['minlength']"
+                    >
+                      Độ dài tối thiểu phải là 5
+                    </div>
+                    <div
+                      *ngIf="orderForm.get('lastname')?.errors?.['maxlength']"
+                    >
+                      Độ dài tối đa phải là 30
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Quốc gia<span>*</span></p>
+              <input
+                class="form-control"
+                type="text"
+                formControlName="country"
+                name="country"
+                [ngClass]="{
+                  'is-invalid': submitted && orderForm.get('country')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="submitted && orderForm.get('country')?.invalid"
+              >
+                <div *ngIf="orderForm.get('country')?.errors?.['required']">
+                  Yêu lòng nhập quốc gia của bạn
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Địa chỉ<span>*</span></p>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Street Address"
+                formControlName="address"
+                name="address"
+                [ngClass]="{
+                  'is-invalid': submitted && orderForm.get('address')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="submitted && orderForm.get('address')?.invalid"
+              >
+                <div *ngIf="orderForm.get('address')?.errors?.['required']">
+                  Yêu lòng nhập địa chỉ của bạn
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Thành phố/Thị trấn<span>*</span></p>
+              <input
+                class="form-control"
+                type="text"
+                formControlName="town"
+                name="town"
+                [ngClass]="{
+                  'is-invalid': submitted && orderForm.get('town')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="submitted && orderForm.get('town')?.invalid"
+              >
+                <div *ngIf="orderForm.get('town')?.errors?.['required']">
+                  Yêu lòng nhập thành phố/ thị trấn của bạn
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Quận/Huyện<span>*</span></p>
+              <input
+                class="form-control"
+                type="text"
+                formControlName="state"
+                name="state"
+                [ngClass]="{
+                  'is-invalid': submitted && orderForm.get('state')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="submitted && orderForm.get('state')?.invalid"
+              >
+                <div *ngIf="orderForm.get('state')?.errors?.['required']">
+                  Yêu lòng nhập quận/huyện của bạn
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input">
+              <p>Mã bưu điện / Zip<span>*</span></p>
+              <input
+                class="form-control"
+                type="text"
+                formControlName="postCode"
+                name="postCode"
+                [ngClass]="{
+                  'is-invalid': submitted && orderForm.get('postCode')?.invalid
+                }"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="submitted && orderForm.get('postCode')?.invalid"
+              >
+                <div *ngIf="orderForm.get('postCode')?.errors?.['required']">
+                  Yêu lòng nhập mã bưu điện chỗ ở hiện tại của bạn
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Điện thoại<span>*</span></p>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="phone"
+                    name="phone"
+                    [ngClass]="{
+                      'is-invalid': submitted && orderForm.get('phone')?.invalid
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="submitted && orderForm.get('phone')?.invalid"
+                  >
+                    <div *ngIf="orderForm.get('phone')?.errors?.['required']">
+                      Yêu lòng nhập số điện thoại của bạn
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="checkout__input">
+                  <p>Email<span>*</span></p>
+                  <input
+                    class="form-control"
+                    type="text"
+                    formControlName="email"
+                    name="email"
+                    [ngClass]="{
+                      'is-invalid': submitted && orderForm.get('email')?.invalid
+                    }"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    *ngIf="submitted && orderForm.get('email')?.invalid"
+                  >
+                    <div *ngIf="orderForm.get('email')?.errors?.['required']">
+                      Yêu lòng nhập email của bạn
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="checkout__input__checkbox">
+              <label for="diff-acc">
+                Gửi đến một địa chỉ khác?
+                <input type="checkbox" id="diff-acc" />
+                <span class="checkmark"></span>
+              </label>
+            </div>
+            <div class="checkout__input">
+              <p>Ghi chú đặt hàng<span>*</span></p>
+              <input
+                class="form-control"
+                type="text"
+                placeholder="Ghi chú về đơn đặt hàng của bạn, ví dụ: ghi chú đặc biệt để giao hàng."
+                formControlName="note"
+                name="note"
+              />
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="checkout__order">
+              <h4>Đơn hàng của bạn</h4>
+              <div class="checkout__order__products">
+                Các sản phẩm <span>Gía</span>
+              </div>
+              <ul>
+                <li *ngFor="let item of cartService.items">
+                  {{ item.name }}
+                  <span>{{ item.subTotal | currency : "VND" }}</span>
+                </li>
+              </ul>
+              <div class="checkout__order__subtotal">
+                Tổng tiền hàng
+                <span>{{ cartService.totalPrice | currency : "VND" }}</span>
+              </div>
+              <div class="checkout__order__sale">Sale <span>0%</span></div>
+              <div class="checkout__order__total">
+                Tổng thanh toán:
+                <span>{{ cartService.total | currency : "VND" }}</span>
+              </div>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adip elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <div class="checkout__input__checkbox">
+                <label for="payment">
+                  Kiểm tra thanh toán
+                  <input type="checkbox" id="payment" />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="checkout__input__checkbox">
+                <label for="paypal">
+                  Paypal
+                  <input type="checkbox" id="paypal" />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <button type="submit" class="site-btn" [class.disabled]="!check">
+                ĐẶT HÀNG
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
